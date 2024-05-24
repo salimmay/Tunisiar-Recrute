@@ -1,0 +1,38 @@
+.profile-dropdown-container {
+    position: relative;
+  }
+  
+  .profile-toggle {
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .dropdown-content {
+    display: block;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dropdown-content button {
+    display: block;
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    background-color: transparent;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .dropdown-content button:hover {
+    background-color: #f5f5f5;
+  }
+  .logo{
+    padding: 30px;
+    width: 200px;
+  }

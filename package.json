@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "jsonwebtoken": "^9.0.2",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.23.1"
+  },
+  "scripts": {
+    "server": "npm start --prefix ./Back",
+    "client": "npm start --prefix ./Front",
+    "tunisair": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "postinstall": "npm install --prefix ./Back && npm install --prefix ./Front"
+  }
+}

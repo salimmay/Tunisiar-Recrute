@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 
-const { Schema } = mongoose; 
+const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
@@ -29,7 +29,7 @@ const userSchema = new Schema(
     supervisedInterns: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User",  
+        ref: "User",
       },
     ],
   },
@@ -42,7 +42,4 @@ userSchema.methods.generateAuthToken = function() {
   const token = jwt.sign({ _id: this._id, email: this.email, role: this.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
   return token;
 };
-
-
-// Export the model
 module.exports = mongoose.model("User", userSchema);

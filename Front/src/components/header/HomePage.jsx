@@ -28,14 +28,8 @@ export default function HomePage() {
         <div className="relative bg-gray-100 lg:bg-transparent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:grid lg:grid-cols-2 lg:gap-8">
             <div className="max-w-2xl mx-auto py-24 lg:py-64 lg:max-w-none">
-            <div className="relative hidden lg:block">
-              <img
-                className="absolute inset-0 h-full w-full object-cover"
-                src="https://unsplash.com/photos/black-smartphone-near-person-5QgIuuBxKwM"
-                alt="Teamwork"
-              />
-            </div>
-              <div className="lg:pr-16">
+              
+              <div className="lg:pr-16"              >
                 <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl xl:text-6xl">
                   Focus on what matters
                 </h1>

@@ -10,13 +10,11 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const user = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
     if (user) {
       setIsLoggedIn(true);
-      setUser(user);
     } else {
       setIsLoggedIn(false);
     }
@@ -37,8 +35,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem("token");
-    window.location.reload();
+    localStorage.removeItem("user");
   };
 
   return (

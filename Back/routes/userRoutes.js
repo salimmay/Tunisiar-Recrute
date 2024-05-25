@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   getUsers,
@@ -9,14 +9,15 @@ const {
   getRole,
   loginUser,
   getEmail,
-} = require('../controllers/userController');
-const auth = require('../middleware/auth');
+} = require("../controllers/userController");
+const auth = require("../middleware/auth");
 
-router.route('/').get(getUsers)
-router.route('/role/:role').get(getRole)
-router.route('/user/:id').put(updateUser).delete(deleteUser).get(getUser)
-router.route('/mail/:mail').get(getEmail)
-router.route('/signup').post(setUser)
-router.route('/login').post(loginUser)
+router.route("/auth").get(auth);
+router.route("/").get(getUsers);
+router.route("/role/:role").get(getRole);
+router.route("/user/:id").put(updateUser).delete(deleteUser).get(getUser);
+router.route("/mail/:email").get(getEmail);
+router.route("/signup").post(setUser);
+router.route("/login").post(loginUser);
 
 module.exports = router;

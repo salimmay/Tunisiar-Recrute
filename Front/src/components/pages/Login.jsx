@@ -18,6 +18,7 @@ import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
 import api from "../../service/api";
 import Button from "@mui/material/Button";
+import axios from "axios";
 
 export default function LoginItem() {
   const navigate = useNavigate();
@@ -42,12 +43,15 @@ export default function LoginItem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data: res } = await api.post("/users/login", formData);
-      localStorage.setItem("token", res.data);
+      const res = await api.post(`/users/login`, formData);
+      localStorage.setItem("user", JSON.stringify(res.data));
       navigate("/");
-      window.location.reload();
     } catch (error) {
-      if (error.response && error.response.status >= 400 && error.response.status <= 500) {
+      if (
+        error.response &&
+        error.response.status >= 400 &&
+        error.response.status <= 500
+      ) {
         setError(error.response.data.message);
       }
     }
@@ -159,9 +163,9 @@ export default function LoginItem() {
                 sx={{
                   mt: 3,
                   mb: 2,
-                  bgcolor: 'red',
-                  '&:hover': {
-                    backgroundColor: 'darkred',
+                  bgcolor: "red",
+                  "&:hover": {
+                    backgroundColor: "darkred",
                   },
                 }}
               >

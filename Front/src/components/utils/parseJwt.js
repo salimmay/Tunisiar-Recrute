@@ -1,23 +1,12 @@
-export function parseJwt(token) {
-  try {
-    if (!token) {
-      throw new Error("Token is undefined or null.");
-    }
+function parseJwt(token) {
+  if (!token) { return; }
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace('-', '+').replace('_', '/');
+  return JSON.parse(window.atob(base64));
+}
 
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map(function (c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join("")
-    );
 
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error("Error parsing JWT token:", error);
-    return null;
-  }
+export default function UserID(token) {
+  const jwtID = parseJwt(token)
+  return jwtID._id;
 }

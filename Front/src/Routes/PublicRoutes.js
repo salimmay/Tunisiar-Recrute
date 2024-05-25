@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Main from "../components/pages/Main";
 import AllOffers from "../components/pages/AllOffers";
 import Login from "../components/pages/Login";

@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Main from "../components/pages/Main";
 import AllOffers from "../components/pages/AllOffers";
 import Login from "../components/pages/Login";
@@ -20,10 +20,20 @@ import Error from "../components/pages/Error";
 import ManageInternshipOffer from "../users/internship-coordinator/pages/authentication/profile/ManageInternshipOffer";
 import ModifyOffer from "../users/internship-coordinator/pages/authentication/profile/ModifyOffer";
 import ModifyQuiz from "../users/internship-coordinator/pages/authentication/profile/ModifyQuiz";
+import { AuthProvider } from "../components/contexts/AuthProvider";
 
 const InternshipCoordinatorRoutes = () => {
   console.log("Internship Coordinator");
 
+  const user = localStorage.getItem("user");
+  const location =useLocation()
+  console.log("Public");
+ console.log(location)
+
+ useEffect(()=>{
+  AuthProvider(JSON.parse(user))
+ },[location,user]
+)
   return (
     <Routes>
       <Route path="/" element={<Main />} />

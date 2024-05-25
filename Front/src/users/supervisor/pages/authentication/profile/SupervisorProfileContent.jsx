@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../../../../../components/contexts/AuthProvider';
 import API from "../../../../../service/api"
 
 function InternProfileContent() {
@@ -8,7 +7,7 @@ function InternProfileContent() {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [confirmPassword, setConfirmPassword] = useState('');
-  const user = useUser();
+  const user = localStorage.getItem('user');
 
   useEffect(() => {
     const fetchProfileData = async () => {

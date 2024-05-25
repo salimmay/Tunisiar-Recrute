@@ -1,145 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import API from '../../../../../service/api';
-import ApplicationModal from './ApplicationModal';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { API_URL } from "../../../../../config";
+import ApplicationModal from "./ApplicationModal";
 
-function Applications() {
-  const [acceptedApplications, setAcceptedApplications] = useState([]);
-  const [filteredApplications, setFilteredApplications] = useState([]);
+function SupervisorDashboard() {
+  const [applications, setApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [open, setOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [statusChange, setStatusChange] = useState({ id: null, status: '' });
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const fetchAcceptedApplications = async () => {
+    const fetchApprovedApplications = async () => {
       try {
-        const response = await API.get('/applications?status=accepted');
-        setAcceptedApplications(response.data);
-        setFilteredApplications(response.data);
+        const response = await axios.get(
+          `${API_URL}/applications?status=approved`
+        );
+        setApplications(response.data);
       } catch (error) {
-        console.error('Error fetching accepted applications:', error);
+        console.error("Error fetching approved applications:", error);
       }
     };
-
-    fetchAcceptedApplications();
+    fetchApprovedApplications();
   }, []);
 
-  const handleSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
-    setFilteredApplications(
-      acceptedApplications.filter((application) => {
-        const { firstName = '', lastName = '', department = '', status = '' } = application;
-        return (
-          firstName.toLowerCase().includes(value) ||
-          lastName.toLowerCase().includes(value) ||
-          department.toLowerCase().includes(value) ||
-          status.toLowerCase().includes(value)
-        );
-      })
+  const handleSupervisionStatusChange = (id, supervisionStatus) => {
+    setSelectedApplication(
+      applications.find((application) => application._id === id)
     );
-  };
-
-  const handleStatusChangeRequest = (id, status) => {
-    setStatusChange({ id, status });
     setConfirmationOpen(true);
   };
 
   const handleConfirmStatusChange = async () => {
-    try {
-      await API.put(`/applications/${statusChange.id}`, { status: statusChange.status });
-      setAcceptedApplications((prev) =>
-        prev.map((application) =>
-          application.id === statusChange.id
-            ? { ...application, status: statusChange.status }
-            : application
-        )
-      );
-      setFilteredApplications((prev) =>
-        prev.map((application) =>
-          application.id === statusChange.id
-            ? { ...application, status: statusChange.status }
-            : application
-        )
-      );
-      setConfirmationOpen(false);
-    } catch (error) {
-      console.error('Error updating application status:', error);
+    if (selectedApplication) {
+      try {
+        await axios.put(`${API_URL}/applications/${selectedApplication._id}`, {
+          status: selectedApplication.supervisionStatus,
+        });
+        setApplications((prevApplications) =>
+          prevApplications.map((application) =>
+            application._id === selectedApplication._id
+              ? {
+                  ...application,
+                  status: selectedApplication.supervisionStatus,
+                }
+              : application
+          )
+        );
+      } catch (error) {
+        console.error("Error updating supervision status:", error);
+      } finally {
+        setConfirmationOpen(false);
+        setSelectedApplication(null);
+      }
     }
   };
 
   const handleCancelStatusChange = () => {
     setConfirmationOpen(false);
-  };
-
-  const handleApplicationClick = (application) => {
-    setSelectedApplication(application);
-    setOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setOpen(false);
     setSelectedApplication(null);
   };
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Search by title, status, or department"
-        value={searchTerm}
-        onChange={handleSearch}
-        className="mb-20 p-2 border border-gray-300 rounded-md"
-      />
-            <h1 className='text-font-bold'>Accepted Applicants</h1>
-
-      <ul>
-        {filteredApplications.map((application) => (
+      <h1>Approved Applications</h1>
+      <ul className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-3 w-full">
+        {applications.map((application) => (
           <li
-            key={application.id}
-            onClick={() => handleApplicationClick(application)}
-            className="p-4 border-b border-gray-200 cursor-pointer"
+            key={application._id}
+            className="p-4 border border-gray-200 rounded-md shadow-md hover:shadow-lg cursor-pointer w-full"
+            onClick={() => {
+              setSelectedApplication(application);
+              setOpen(true);
+            }}
           >
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <div>
                 <div className="font-medium">
                   {application.firstName} {application.lastName}
                 </div>
-                <div className="font-medium text-gray-400">{application.department}</div>
+                <div className="text-gray-400">{application.university}</div>
               </div>
-              <div className="text-gray-500">
-                <button
-                  className="mr-200"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleApplicationClick(application);
-                  }}
-                >
-                  Details
-                </button>
-                <select
-                  value={application.status}
-                  onChange={(e) =>
-                    handleStatusChangeRequest(application.id, e.target.value)
-                  }
-                  className="w-30 pl-6 rounded-md border-red-300 shadow-sm focus:red-red-500 focus:ring-red-500 sm:text-sm"
-                >
-                  <option value="Approved">Approve</option>
-                  <option value="Rejected">Reject</option>
-                </select>
-              </div>
+              <select
+                value={application.supervisionStatus}
+                onClick={(e) => e.stopPropagation()} // Prevent the modal from opening when changing the status
+                onChange={(e) =>
+                  handleSupervisionStatusChange(application._id, e.target.value)
+                }
+                className="p-2 border border-gray-300 rounded-md"
+              >
+                <option value="pending">Pending</option>
+                <option value="approved">Approve Supervision</option>
+                <option value="rejected">Reject Supervision</option>
+              </select>
             </div>
           </li>
         ))}
       </ul>
-      {selectedApplication && (
+
+      {selectedApplication && open && (
         <ApplicationModal
           application={selectedApplication}
-          open={open}
-          onClose={handleModalClose}
+          onClose={() => setOpen(false)}
         />
       )}
+
       {confirmationOpen && (
         <div className="confirmation">
           <div className="text-right confirmation-content">
@@ -165,4 +129,4 @@ function Applications() {
   );
 }
 
-export default Applications;
+export default SupervisorDashboard;

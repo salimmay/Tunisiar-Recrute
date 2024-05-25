@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Application = require('../models/application');
+const User = require('../models/user');
 
 // Get all applications
 const getApplications = asyncHandler(async (req, res) => {
@@ -43,10 +44,25 @@ const createApplication = asyncHandler(async (req, res) => {
 // Update an application
 const updateApplication = asyncHandler(async (req, res) => {
   try {
-    const updatedApplication = await Application.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { id } = req.params;
+    const { supervisionStatus } = req.body;
+
+    const updatedApplication = await Application.findByIdAndUpdate(id, req.body, { new: true });
+
     if (!updatedApplication) {
       return res.status(404).json({ message: 'Application not found' });
     }
+
+    if (supervisionStatus === 'approved') {
+      const supervisor = await User.findById(req.user._id);
+      if (!supervisor) {
+        return res.status(404).json({ message: 'Supervisor not found' });
+      }
+
+      supervisor.supervisedInterns.push(updatedApplication.user);
+      await supervisor.save();
+    }
+
     res.json({ message: 'Application updated', updatedApplication });
   } catch (error) {
     res.status(500).json({ message: error.message });

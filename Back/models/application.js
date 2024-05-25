@@ -45,6 +45,11 @@ const applicationSchema = new Schema({
     enum: ['pending', 'accepted', 'rejected'],
     default: 'pending'
   },
+  supervisionStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

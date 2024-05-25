@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../../../../config';
@@ -8,14 +8,36 @@ function AddWorkshop() {
     title: '',
     description: '',
     date: '',
-    meetLink: ''
+    meetLink: '',
+    attendees: []
   });
+  const [supervisedUsers, setSupervisedUsers] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSupervisedUsers = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/applications?supervisionStatus==approved`);
+        setSupervisedUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching supervised users:', error);
+      }
+    };
+    fetchSupervisedUsers();
+  }, []);
 
   const handleChange = (e) => {
     setWorkshop({
       ...workshop,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handleAttendeesChange = (e) => {
+    const selectedAttendees = Array.from(e.target.selectedOptions, (option) => option.value);
+    setWorkshop({
+      ...workshop,
+      attendees: selectedAttendees
     });
   };
 
@@ -79,6 +101,24 @@ function AddWorkshop() {
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             required
           />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="attendees" className="block font-semibold">Attendees</label>
+          <select
+            id="attendees"
+            name="attendees"
+            multiple
+            value={workshop.attendees}
+            onChange={handleAttendeesChange}
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            required
+          >
+            {supervisedUsers.map(user => (
+              <option key={user._id} value={user._id}>
+                {user.firstName} {user.lastName}
+              </option>
+            ))}
+          </select>
         </div>
         <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700">
           Create

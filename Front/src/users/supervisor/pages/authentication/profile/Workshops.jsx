@@ -47,11 +47,11 @@ function SupervisorWorkshops() {
   };
 
   const handleAddWorkshop = () => {
-    navigate("/profile/Workshops/AddWorkshop");
+    navigate("/profile/AddWorkshop");
   };
 
   const handleModifyWorkshop = (workshopId) => {
-    navigate(`/profile/Workshops/ModifyWorkshop/${workshopId}`);
+    navigate(`/profile/ModifyWorkshop/${workshopId}`);
   };
 
   if (loading) return <div>Loading...</div>;

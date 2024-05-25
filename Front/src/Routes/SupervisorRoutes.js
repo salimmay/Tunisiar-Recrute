@@ -45,7 +45,7 @@ const SupervisorRoutes = () => {
            <Route path="applications" element={<Applications />} />
            <Route path="workshops" element={<Workshops />} />
            <Route path="AddWorkshop" element={<AddWorkshop />} />
-           <Route path="ModifyWorkshop" element={<ModifyWorkshop />} />
+           <Route path="ModifyWorkshop/:id" element={<ModifyWorkshop />} />
         </Route>
       </Routes>
   );

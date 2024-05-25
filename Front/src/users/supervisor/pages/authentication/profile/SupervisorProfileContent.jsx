@@ -1,22 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import API from "../../../../../service/api"
+import React, { useState, useEffect } from "react";
+import { API_URL } from "../../../../../config";
+import axios from "axios";
 
-function InternProfileContent() {
+function SupervisorProfileContent() {
   const [error, setError] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const user = localStorage.getItem('user');
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setUserId(user.userId);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProfileData = async () => {
-      if (!user || !user.id) {
-        setError(new Error('User data is not available'));
-        return;
-      }
-  try {  
-        const response = await API.get(`/users/user/${user.id}`);
+      try {
+        if (!userId) {
+          setError(new Error("User data is not available"));
+          return;
+        }
+
+        const response = await axios.get(`${API_URL}/users/user/${userId}`);
         setProfileData(response.data);
         setFormData(response.data);
       } catch (error) {
@@ -24,8 +34,10 @@ function InternProfileContent() {
       }
     };
 
-    fetchProfileData();
-  }, [user]);
+    if (userId) {
+      fetchProfileData();
+    }
+  }, [userId]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -38,13 +50,13 @@ function InternProfileContent() {
 
   const handleSave = async () => {
     try {
-      const response = await API.put(`/users/user/${user.id}`, {
+      const response = await axios.put(`${API_URL}/users/user/${userId}`, {
         ...formData,
         confirmPassword,
       });
       setProfileData(response.data);
       setEditing(false);
-      setConfirmPassword('');
+      setConfirmPassword("");
     } catch (error) {
       setError(error);
     }
@@ -56,14 +68,21 @@ function InternProfileContent() {
   return (
     <>
       <div>
-        <h3 className="text-lg leading-6 font-medium text-gray-900">Applicant Information</h3>
-        <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details and application.</p>
+        <h3 className="text-lg leading-6 font-medium text-gray-900">
+          Applicant Information
+        </h3>
+        <p className="mt-1 max-w-2xl text-sm text-gray-500">
+          Personal details and application.
+        </p>
       </div>
       <div className="mt-5 border-t border-gray-200">
         {editing ? (
           <form className="space-y-4">
             <div>
-              <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="firstname"
+                className="block text-sm font-medium text-gray-700"
+              >
                 First Name
               </label>
               <input
@@ -76,7 +95,10 @@ function InternProfileContent() {
               />
             </div>
             <div>
-              <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="lastname"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Last Name
               </label>
               <input
@@ -89,7 +111,10 @@ function InternProfileContent() {
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
@@ -102,7 +127,10 @@ function InternProfileContent() {
               />
             </div>
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Confirm Password
               </label>
               <input
@@ -149,4 +177,4 @@ function InternProfileContent() {
   );
 }
 
-export default InternProfileContent;
+export default SupervisorProfileContent;

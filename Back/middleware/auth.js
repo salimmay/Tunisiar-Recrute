@@ -1,12 +1,14 @@
 const jwt = require("jsonwebtoken");
 const auth = async (req, res, next) => {
   try {
-    const token = req.headers["x-auth-token"];
-    console.log(token);
+    const userHeader = req.headers["x-auth-user"];
+
+    // Deserialize JSON string to object
+    const { token, role } = JSON.parse(userHeader);
+
     if (!token)
       return res.status(401).send("Access denied. No token provided.");
 
-    const role = "user";
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.role !== role) {
       return res

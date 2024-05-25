@@ -9,35 +9,35 @@ function InternProfileContent() {
   const [formData, setFormData] = useState({});
   const [confirmPassword, setConfirmPassword] = useState("");
   const [userId, setUserId] = useState(null);
-  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setUserId(user.userId);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        console.log(userId);
-        if (!userId || !token) {
+        if (!userId) {
           setError(new Error("User data is not available"));
           return;
         }
 
         const response = await axios.get(`${API_URL}/users/user/${userId}`);
-        console.log('it worked',response.data);
         setProfileData(response.data);
         setFormData(response.data);
       } catch (error) {
-        console.log('yyyyyyyyyyyyyyy',error);
         setError(error);
       }
     };
 
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      setUserId(user.userId);
-      setToken(user.token);
+    if (userId) {
       fetchProfileData();
     }
-  }, [userId, token]);
+  }, [userId]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;

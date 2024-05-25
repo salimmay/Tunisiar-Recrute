@@ -27,11 +27,10 @@ const InternshipCoordinatorRoutes = () => {
 
   const user = localStorage.getItem("user");
   const location =useLocation()
-  console.log("Public");
- console.log(location)
 
  useEffect(()=>{
-  AuthProvider(JSON.parse(user))
+  const test =JSON.parse(user)
+  AuthProvider(test)
  },[location,user]
 )
   return (

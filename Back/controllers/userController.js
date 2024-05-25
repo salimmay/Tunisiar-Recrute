@@ -51,12 +51,21 @@ const getEmail = asyncHandler(async (req, res) => {
 // Delete a user by ID
 const deleteUser = asyncHandler(async (req, res) => {
   try {
-    await User.findByIdAndRemove(req.params.id);
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    await User.findByIdAndDelete(req.params.id);
     res.json({ message: "User successfully deleted" });
   } catch (err) {
+    console.error("Error deleting user:", err.message); // Log the exact error message
+    console.error("Stack trace:", err.stack); // Log the stack trace for detailed debugging
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+
+
 
 // Update a user by ID
 const updateUser = asyncHandler(async (req, res) => {

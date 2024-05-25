@@ -1,5 +1,5 @@
-import React from "react";
-import {Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import {Routes, Route, useLocation } from "react-router-dom";
 import Main from "../components/pages/Main";
 import AllOffers from "../components/pages/AllOffers";
 import Login from "../components/pages/Login";
@@ -16,11 +16,18 @@ import Workshops from "../users/supervisor/pages/authentication/profile/Workshop
 import Calendar from "../users/supervisor/pages/authentication/profile/Calendar";
 import AddWorkshop from "../users/supervisor/pages/authentication/profile/AddWorkshop";
 import ModifyWorkshop from "../users/supervisor/pages/authentication/profile/ModifyWorkshop";
+import { AuthProvider } from "../components/contexts/AuthProvider";
 
 
 const SupervisorRoutes = () => {
   console.log("supervisor");
+  const user = localStorage.getItem("user");
+  const location =useLocation()
 
+ useEffect(()=>{
+  AuthProvider(JSON.parse(user))
+ },[location,user]
+)
   return (
       <Routes>
         <Route path="/" element={<Main />} />

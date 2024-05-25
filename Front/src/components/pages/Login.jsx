@@ -18,7 +18,6 @@ import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
 import api from "../../service/api";
 import Button from "@mui/material/Button";
-import axios from "axios";
 
 export default function LoginItem() {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ export default function LoginItem() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("user");
     if (token) {
       navigate("/");
     }

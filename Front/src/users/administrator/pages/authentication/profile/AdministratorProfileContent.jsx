@@ -10,10 +10,11 @@ function AdministratorProfileContent() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
-        const accessToken = "YOUR_ACCESS_TOKEN";
+        const accessToken = "user";
         const response = await axios.get(`${API_URL}/users`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -31,24 +32,19 @@ function AdministratorProfileContent() {
     fetchUsersData();
   }, []);
 
-  const handleDeleteUser = async (userId) => {
-    try {
-      setSelectedUserId(userId);
-      setShowConfirmation(true);
-    } catch (error) {
-      setError(error);
-    }
+  const handleDeleteUser = (userId) => {
+    setSelectedUserId(userId);
+    setShowConfirmation(true);
   };
 
   const handleConfirmUserDeletion = async () => {
     try {
-      const accessToken = "YOUR_ACCESS_TOKEN";
-      await axios.delete(`${API_URL}/users/user${selectedUserId}`, {
+      const accessToken = "user";
+      await axios.delete(`${API_URL}/users/user/${selectedUserId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
       // Filter out the deleted user from the local state
       setUsersData((prevUsersData) =>
         prevUsersData.filter((user) => user._id !== selectedUserId)
@@ -58,7 +54,6 @@ function AdministratorProfileContent() {
       setError(error);
     }
   };
-
   const handleCancelUserDeletion = () => {
     setShowConfirmation(false);
   };
@@ -76,7 +71,8 @@ function AdministratorProfileContent() {
       <button
         onClick={handleAddUser}
         className="absolute top-40 right-20 bg-red-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-      > Add User
+      >
+        Add User
       </button>
       <div className="border-gray-200">
         <dl className="divide-y divide-gray-200">
@@ -86,8 +82,10 @@ function AdministratorProfileContent() {
               className="py-4 sm:py-7 sm:grid sm:grid-cols-3 sm:gap-4"
             >
               <dd className="mt-1 flex text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                <span className="flex-grow">{user.firstname} {user.lastname}</span>
-                <span className="flex-grow"> {user.role}</span>
+                <span className="flex-grow">
+                  {user.firstname} {user.lastname}
+                </span>
+                <span className="flex-grow">{user.role}</span>
                 <span className="flex items-center">
                   <button
                     onClick={() => handleDeleteUser(user._id)}
@@ -114,7 +112,7 @@ function AdministratorProfileContent() {
               </button>
               <button
                 onClick={handleCancelUserDeletion}
-                className="bg-gray-300 p-3 ml-5  text-gray-700 px-4 py-2 rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+                className="bg-gray-300 p-3 ml-5 text-gray-700 px-4 py-2 rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
               >
                 No
               </button>

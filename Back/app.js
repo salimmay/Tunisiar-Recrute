@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-require('dotenv').config();
+require("dotenv").config();
 const mongoose = require("mongoose");
 
 // Connect to MongoDB
@@ -14,23 +14,40 @@ mongoose
 const userRoutes = require("./routes/userRoutes");
 const internshipOfferRoutes = require("./routes/internshipOfferRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
-const quizQuestionRoutes = require('./routes/quizQuestionRoutes');
-const quizResultRoutes = require('./routes/quizResultRoutes');
-const workshopRoutes = require('./routes/workshopRoutes');
+const quizQuestionRoutes = require("./routes/quizQuestionRoutes");
+const quizResultRoutes = require("./routes/quizResultRoutes");
+const workshopRoutes = require("./routes/workshopRoutes");
+var bodyParser = require("body-parser");
 
 const app = express();
 
 // Middleware
 app.use(cors()); // Enable CORS
-app.use(express.json()); // Parse JSON request bodies
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+  })
+);
+app.use(express.json({ limit: "50mb" }));
+app.use(function (req, res, next) {
+  res.header("Content-Type", "application/json;charset=UTF-8");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 // Routes
 app.use("/users", userRoutes);
 app.use("/internshipOffers", internshipOfferRoutes);
 app.use("/applications", applicationRoutes);
-app.use('/quizQuestions', quizQuestionRoutes);
-app.use('/quizResults', quizResultRoutes);
-app.use('/workshops', workshopRoutes);
+app.use("/quizQuestions", quizQuestionRoutes);
+app.use("/quizResults", quizResultRoutes);
+app.use("/workshops", workshopRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

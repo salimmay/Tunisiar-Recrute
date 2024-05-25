@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
 
-// Define the InternshipOffer schema
 const internshipOfferSchema = new Schema({
   title: {
     type: String,
@@ -28,7 +26,6 @@ const internshipOfferSchema = new Schema({
   timestamps: true 
 });
 
-// Define the MongoDB model
 const InternshipOffer = mongoose.model('InternshipOffer', internshipOfferSchema);
 
 module.exports = InternshipOffer;

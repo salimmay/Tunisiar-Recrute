@@ -51,11 +51,25 @@ const getEmail = asyncHandler(async (req, res) => {
 // Delete a user by ID
 const deleteUser = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const { id } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ message: "Password is required for verification." });
+    }
+
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
-    await User.findByIdAndDelete(req.params.id);
+
+    // Verify the provided password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password." });
+    }
+
+    await User.findByIdAndDelete(id);
     res.json({ message: "User successfully deleted" });
   } catch (err) {
     console.error("Error deleting user:", err.message); // Log the exact error message
@@ -69,17 +83,20 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 // Update a user by ID
 const updateUser = asyncHandler(async (req, res) => {
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const { email, firstname, lastname, role, password } = req.body;
 
-  const updatedInfo = {
-    email: req.body.email,
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    role: req.body.role,
-    password: hashedPassword,
+  let updatedInfo = {
+    email,
+    firstname,
+    lastname,
+    role,
   };
-
+  // If password is provided, hash it and add to the update info
+  if (password) {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    updatedInfo.password = hashedPassword;
+  }
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
@@ -88,6 +105,8 @@ const updateUser = asyncHandler(async (req, res) => {
     ).select("-password");
     res.json(updatedUser);
   } catch (err) {
+    console.error("Error updating user:", err.message); 
+    console.error("Stack trace:", err.stack);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });

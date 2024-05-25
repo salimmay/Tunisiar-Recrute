@@ -52,7 +52,7 @@ const InternshipCoordinatorRoutes = () => {
         <Route path="applications" element={<Applications />} />
         <Route path="ManageInternshipOffer" element={<ManageInternshipOffer />} />
         <Route path="AddInternshipOffer" element={<AddInternshipOffer />} />
-        <Route path="AddQuiz" element={<AddQuiz />} />
+        <Route path="AddQuiz/:id" element={<AddQuiz />} />
         <Route path="ModifyOffer/:id" element={<ModifyOffer/>}/>
         <Route path="ModifyQuiz/:id" element={<ModifyQuiz/>}/>
       </Route>

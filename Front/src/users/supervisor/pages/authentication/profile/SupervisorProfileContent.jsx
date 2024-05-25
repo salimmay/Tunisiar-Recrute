@@ -8,6 +8,7 @@ function SupervisorProfileContent() {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [newPassword, setNewPassword] = useState(""); // State for new password
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
@@ -50,13 +51,21 @@ function SupervisorProfileContent() {
 
   const handleSave = async () => {
     try {
+      // Check if new password and confirmation password match
+      if (newPassword !== confirmPassword) {
+        setError(new Error("New password and confirmation password do not match."));
+        return;
+      }
+
       const response = await axios.put(`${API_URL}/users/user/${userId}`, {
         ...formData,
+        newPassword, // Pass new password to the server
         confirmPassword,
       });
       setProfileData(response.data);
       setEditing(false);
       setConfirmPassword("");
+      setNewPassword(""); // Clear new password state after saving
     } catch (error) {
       setError(error);
     }
@@ -69,10 +78,10 @@ function SupervisorProfileContent() {
     <>
       <div>
         <h3 className="text-lg leading-6 font-medium text-gray-900">
-          Applicant Information
+          User Information
         </h3>
         <p className="mt-1 max-w-2xl text-sm text-gray-500">
-          Personal details and application.
+          Personal details
         </p>
       </div>
       <div className="mt-5 border-t border-gray-200">
@@ -123,6 +132,22 @@ function SupervisorProfileContent() {
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="newPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
+                New Password
+              </label>
+              <input
+                type="password"
+                name="newPassword"
+                id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
               />
             </div>

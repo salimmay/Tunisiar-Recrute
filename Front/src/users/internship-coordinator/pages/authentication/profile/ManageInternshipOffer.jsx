@@ -14,7 +14,7 @@ function ManageInternshipOffer() {
   useEffect(() => {
     const fetchOffersData = async () => {
       try {
-        const accessToken = "YOUR_ACCESS_TOKEN";
+        const accessToken = "user";
         const response = await axios.get(`${API_URL}/internshipOffers`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -43,7 +43,7 @@ function ManageInternshipOffer() {
 
   const handleConfirmOfferDeletion = async () => {
     try {
-      const accessToken = "YOUR_ACCESS_TOKEN";
+      const accessToken = "user";
       await axios.delete(`${API_URL}/internshipOffers/${selectedOfferId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,

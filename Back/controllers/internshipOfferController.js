@@ -1,19 +1,15 @@
 const asyncHandler = require("express-async-handler");
 const InternshipOffer = require("../models/internshipOffer");
 
-// Get all internship offers
 const getInternshipOffers = asyncHandler(async (req, res) => {
   try {
-    await InternshipOffer.find({})
-      .then((result) => {
-        res.send(result);
-      });
+    const result = await InternshipOffer.find({});
+    res.send(result);
   } catch (err) {
     console.log(err);
   }
 });
 
-// Get a single internship offer by ID
 const getInternshipOffer = asyncHandler(async (req, res) => {
   try {
     const internshipOffer = await InternshipOffer.findById(req.params.id);
@@ -26,7 +22,6 @@ const getInternshipOffer = asyncHandler(async (req, res) => {
   }
 });
 
-// Create a new internship offer
 const createInternshipOffer = asyncHandler(async (req, res) => {
   try {
     const newInternshipOffer = await InternshipOffer.create(req.body);
@@ -36,7 +31,6 @@ const createInternshipOffer = asyncHandler(async (req, res) => {
   }
 });
 
-// Update an internship offer
 const updateInternshipOffer = asyncHandler(async (req, res) => {
   try {
     const updatedInternshipOffer = await InternshipOffer.findByIdAndUpdate(
@@ -53,7 +47,6 @@ const updateInternshipOffer = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete an internship offer
 const deleteInternshipOffer = asyncHandler(async (req, res) => {
   try {
     const deletedInternshipOffer = await InternshipOffer.findByIdAndDelete(

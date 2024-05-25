@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const QuizQuestion = require('../models/quizQuestion');
 
-// Get all quiz questions
 const getQuizQuestions = asyncHandler(async (req, res) => {
   try {
     const quizQuestions = await QuizQuestion.find();
@@ -11,7 +10,6 @@ const getQuizQuestions = asyncHandler(async (req, res) => {
   }
 });
 
-// Get a single quiz question by ID
 const getQuizQuestion = asyncHandler(async (req, res) => {
   try {
     const quizQuestion = await QuizQuestion.findById(req.params.id);
@@ -24,17 +22,20 @@ const getQuizQuestion = asyncHandler(async (req, res) => {
   }
 });
 
-// Create new quiz questions
 const createQuizQuestions = asyncHandler(async (req, res) => {
   try {
-    const quizQuestions = await QuizQuestion.insertMany(req.body.questions);
+    const internshipOfferId = req.body.internshipOfferId;
+    const questions = req.body.questions.map(question => ({
+      ...question,
+      internshipOffer: internshipOfferId
+    }));
+    const quizQuestions = await QuizQuestion.insertMany(questions);
     res.status(201).json(quizQuestions);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Update a quiz question
 const updateQuizQuestion = asyncHandler(async (req, res) => {
   try {
     const updatedQuizQuestion = await QuizQuestion.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -47,7 +48,6 @@ const updateQuizQuestion = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete a quiz question
 const deleteQuizQuestion = asyncHandler(async (req, res) => {
   try {
     const deletedQuizQuestion = await QuizQuestion.findByIdAndDelete(req.params.id);

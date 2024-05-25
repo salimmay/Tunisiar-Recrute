@@ -18,7 +18,7 @@ function ModifyOffer() {
   useEffect(() => {
     const fetchOfferData = async () => {
       try {
-        const accessToken = 'YOUR_ACCESS_TOKEN';
+        const accessToken = 'user';
         const response = await axios.get(`${API_URL}/internshipOffers/${offerId}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -47,20 +47,20 @@ function ModifyOffer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const accessToken = 'YOUR_ACCESS_TOKEN';
+      const accessToken = 'user';
       await axios.put(`${API_URL}/internshipOffers/${offerId}`, offerData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      navigate('InternshipCoordinatorProfile'); 
+      navigate('/profile/ManageInternshipOffer'); 
     } catch (error) {
       setError(error);
     }
   };
 
   const handleModifyQuiz = () => {
-    navigate(`/ModifyOffer/ModifyQuiz/${offerId}`);
+    navigate(`/profile/ModifyQuiz/${offerId}`);
   };
 
   if (loading) return <div>Loading...</div>;

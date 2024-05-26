@@ -1,38 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import "./Quiz.css";
+import { API_URL } from "../../config";
 
 const Quiz = () => {
-  const id = "1"; 
-  const [questions] = useState([
-    {
-      questionText: "What does PHP stand for?",
-      options: [
-        "Personal Home Page",
-        "Private Home Page",
-        "PHP: Hypertext Preprocessor",
-        "Preprocessor Home Page"
-      ]
-    },
-    {
-      questionText: "PHP server scripts are surrounded by which delimiters?",
-      options: [
-        "<script>...</script>",
-        "<?php...?>",
-        "<&...&>",
-        "<?php?>"
-      ]
-    },
-    {
-      questionText: "Which version of PHP introduced the try/catch exception handling?",
-      options: [
-        "PHP 4",
-        "PHP 5",
-        "PHP 5.3",
-        "PHP 7"
-      ]
-    }
-  ]);
-  const [answers, setAnswers] = useState({ 0: "", 1: "", 2: "" });
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch quiz questions from the API
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch(`${API_URL}/quizQuestions/${id}`);
+        const data = await response.json();
+        setQuestions(data);
+        setAnswers(data.reduce((acc, _, idx) => ({ ...acc, [idx]: "" }), {}));
+      } catch (error) {
+        console.error("Error fetching quiz questions:", error);
+      }
+    };
+
+    fetchQuestions();
+  }, [id]);
 
   const handleChange = (e, index) => {
     const { value } = e.target;
@@ -42,26 +33,36 @@ const Quiz = () => {
   const handleSubmitQuiz = async (e) => {
     e.preventDefault();
     try {
-      console.log("Quiz results:", { internshipOfferId: id, answers });
-      // Handle success
+      const response = await fetch(`${API_URL}/quizResults/quiz-results`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ internshipOfferId: id, answers }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Quiz submission failed");
+      }
+
       console.log("Quiz results submitted successfully");
+      alert("Application Submitted, You will be hearing from us soon");
+      navigate("/");
     } catch (error) {
       console.error("Error submitting quiz results:", error);
     }
-    alert("Application Submitted, You will be hearing from us soon");
-    window.location.href = "/";
   };
 
   return (
-    <div className="question-container ">
-      <h2 className="question-title">Quiz</h2>
+    <div className="quiz-container">
+      <h2 className="quiz-title">Quiz</h2>
       <form onSubmit={handleSubmitQuiz}>
         {questions.map((question, index) => (
-          <div key={index}>
+          <div key={index} className="question-block">
             <p className="question-text">{question.questionText}</p>
             <div className="options-container">
               {question.options.map((option, optionIndex) => (
-                <div key={optionIndex}>
+                <div key={optionIndex} className="option-block">
                   <input
                     type="radio"
                     id={`option-${index}-${optionIndex}`}

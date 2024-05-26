@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { Switch } from "@headlessui/react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -10,7 +11,7 @@ function classNames(...classes) {
 
 export default function ApplicationForm() {
   const [agreed, setAgreed] = useState(false);
-  const { offerId } = useParams(); 
+  const { offerId } = useParams();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -20,10 +21,36 @@ export default function ApplicationForm() {
     resume: "",
     coverLetter: "",
     aboutYourself: "",
-    internshipOfferId: offerId 
+    internshipOfferId: offerId,
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+          throw new Error("User data is not available");
+        }
+        // Fetch user data based on the logged-in user ID
+        const response = await axios.get(`${API_URL}/users/user/${user.userId}`);
+        // Set form data with user data
+        setFormData({
+          ...formData,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName,
+          email: response.data.email,
+        });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        // Redirect to the login page if user data is not available
+        navigate("/login");
+      }
+    };
+
+    fetchUserData();
+  }, [formData, navigate]); // Make sure to add formData and navigate to the dependency array
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,17 +71,19 @@ export default function ApplicationForm() {
         body: JSON.stringify(formData),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
+        console.error('Response status:', response.status);
+        console.error('Response data:', responseData);
         throw new Error("Application submission failed");
       }
-
       // Redirect to the quiz page
       navigate(`/Quiz/${offerId}`);
     } catch (error) {
-      console.error(error);
+      console.error('Error message:', error.message);
     }
   };
-
   return (
     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div
@@ -201,15 +230,12 @@ export default function ApplicationForm() {
             </label>
             <div className="mt-2.5">
               <input
-                type="file"
+                type="text"
                 name="resume"
                 id="resume"
-                autoComplete="resume"
                 required
-                onChange={(e) =>
-                  setFormData({ ...formData, resume: e.target.files[0] })
-                }
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 file:bg-transparent file:border-0 file:px-2 file:py-1 file:text-sm file:font-semibold file:text-gray-900 hover:file:bg-gray-50 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                onChange={handleChange}
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               />
             </div>
           </div>
@@ -222,24 +248,20 @@ export default function ApplicationForm() {
             </label>
             <div className="mt-2.5">
               <input
-                type="file"
+                type="text"
                 name="coverLetter"
                 id="cover-letter"
-                autoComplete="cover-letter"
-                required
-                onChange={(e) =>
-                  setFormData({ ...formData, coverLetter: e.target.files[0] })
-                }
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 file:bg-transparent file:border-0 file:px-2 file:py-1 file:text-sm file:font-semibold file:text-gray-900 hover:file:bg-gray-50 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                onChange={handleChange}
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               />
             </div>
           </div>
-          <div className="col-span-full">
+          <div className="sm:col-span-2">
             <label
               htmlFor="about-yourself"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              About Yourself
+              Tell us about yourself
             </label>
             <div className="mt-2.5">
               <textarea
@@ -253,40 +275,38 @@ export default function ApplicationForm() {
               ></textarea>
             </div>
           </div>
-          <Switch.Group as="div" className="flex gap-x-4 sm:col-span-2">
-            <div className="flex h-6 items-center">
-              <Switch
-                checked={agreed}
-                onChange={setAgreed}
+          <div className="flex gap-x-4 sm:col-span-2">
+            <Switch
+              checked={agreed}
+              onChange={setAgreed}
+              className={classNames(
+                agreed ? "bg-red-600" : "bg-gray-200",
+                "relative inline-flex flex-shrink-0 h-6 w-11 border-0 rounded-full cursor-pointer transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
+              )}
+            >
+              <span
+                aria-hidden="true"
                 className={classNames(
-                  agreed ? "bg-red-600" : "bg-gray-200",
-                  "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-0 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+                  agreed ? "translate-x-5" : "translate-x-0",
+                  "inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition-transform duration-200 ease-in-out"
                 )}
-              >
-                <span
-                  aria-hidden="true"
-                  className={classNames(
-                    agreed ? "translate-x-5" : "translate-x-0",
-                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                  )}
-                />
-              </Switch>
-            </div>
-            <Switch.Label className="text-sm leading-6 text-gray-600">
-              By selecting this, you agree to our{" "}
-              <Link to="/privacy-policy" className="font-semibold text-red-600">
-                privacy&nbsp;policy
+              />
+            </Switch>
+            <label className="text-sm leading-6 text-gray-600">
+              By applying, you agree to our{" "}
+              <Link to="#" className="font-semibold text-red-600">
+                terms and conditions
               </Link>
               .
-            </Switch.Label>
-          </Switch.Group>
+            </label>
+          </div>
         </div>
         <div className="mt-10">
           <button
-            type="handleSubmitApplication"
+            type="submit"
             className="block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           >
-            Submit
+            Apply
           </button>
         </div>
       </form>

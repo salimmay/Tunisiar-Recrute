@@ -36,8 +36,8 @@ const AdministratorRoutes = () => {
       <Route path="about" element={<About />} />
       <Route path="signup" element={<SignUp />} />
       <Route path="offerDetailsItem/:id" element={<OfferDetailsItem />} />
-      <Route path="applicationForm" element={<ApplicationForm />} />
-      <Route path="quiz" element={<Quiz />} />
+      <Route path="applicationForm/:id" element={<ApplicationForm />} />
+      <Route path="quiz/:id" element={<Quiz />} />
       <Route path="/profile" element={<Profile />}>
         <Route
           path="AdministratorProfileContent"

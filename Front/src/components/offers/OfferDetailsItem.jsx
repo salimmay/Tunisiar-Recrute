@@ -1,41 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./OfferDetailsItem.css";
-//import useGet from "../data/Functions/useGet";
 import { API_URL } from "../../config";
 
 const OfferDetailsItem = () => {
-  const [offer, setOffer] = useState([]);
-  useEffect(()=>{
-    const url = window.location.href
-    const id = url.split("/").slice(-1)
-  
+  const [offer, setOffer] = useState({});
+  const { id } = useParams();
+
+  useEffect(() => {
     fetch(`${API_URL}/internshipOffers/${id}`, {
-        method: "Get",
-      })
-        .then((data) => data.json())
-        .then((data) => {
-          setOffer(data);
-        });
-  
-  },[])
- 
-  // useEffect(() => {
-  //   // Function to fetch data from the API
-  //   const fetchData = async () => {
-  //     try {
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-  //       const data = await response.json();
-  //       console.log(response)
-  //       setOffer(data);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  //   fetchData(); // Call the function to fetch data when component mounts
-  // }, []);
+      method: "GET",
+    })
+      .then((data) => data.json())
+      .then((data) => {
+        setOffer(data);
+      });
+  }, [id]);
+
   return (
     <div className="offer-details-container">
       <div className="offer-details-content">
@@ -54,7 +35,7 @@ const OfferDetailsItem = () => {
             <dd className="offer-details-value">{offer.description}</dd>
           </div>
         </dl>
-        <Link to={"/ApplicationForm"} className="offer-apply-link">
+        <Link to={`/ApplicationForm/${id}`} className="offer-apply-link">
           <button className="offer-apply-button">Apply</button>
         </Link>
       </div>

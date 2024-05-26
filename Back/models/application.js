@@ -57,6 +57,10 @@ const applicationSchema = new Schema({
   internshipOffer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'InternshipOffer'
+  },
+  quizResult : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'quizResult'
   }
 });
 

@@ -10,7 +10,7 @@ const {
 
   router.get('/', getApplications);
   router.get('/:id', getApplication);
-  router.post('/', createApplication);
+  router.post('/create', createApplication);
   router.put('/:id', updateApplication);
   router.delete('/:id', deleteApplication);
 

@@ -33,8 +33,8 @@ const InternRoutes = () => {
       <Route path="*" element={<Error />} />
       <Route path="careers" element={<AllOffers />} />
       <Route path="offerDetailsItem/:id" element={<OfferDetailsItem />} />
-      <Route path="applicationForm" element={<ApplicationForm />} />
-      <Route path="quiz" element={<Quiz />} />
+      <Route path="applicationForm/:id" element={<ApplicationForm />} />
+      <Route path="quiz/:id" element={<Quiz />} />
       <Route path="about" element={<About />} />
       <Route path="blog" element={<Blog />} />
       <Route path="login" element={<Login />} />

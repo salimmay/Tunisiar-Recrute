@@ -1,15 +1,16 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { Switch } from "@headlessui/react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../../config";
- 
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function ApplicationForm() {
   const [agreed, setAgreed] = useState(false);
+  const { offerId } = useParams(); 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -19,6 +20,7 @@ export default function ApplicationForm() {
     resume: "",
     coverLetter: "",
     aboutYourself: "",
+    internshipOfferId: offerId 
   });
 
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ export default function ApplicationForm() {
   const handleSubmitApplication = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/applications`, {
+      const response = await fetch(`${API_URL}/applications/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,7 +49,7 @@ export default function ApplicationForm() {
       }
 
       // Redirect to the quiz page
-      navigate("/Quiz");
+      navigate(`/Quiz/${offerId}`);
     } catch (error) {
       console.error(error);
     }
@@ -195,58 +197,60 @@ export default function ApplicationForm() {
               htmlFor="resume"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              CV link
+              Resume
             </label>
             <div className="mt-2.5">
               <input
-                type="url"
+                type="file"
                 name="resume"
                 id="resume"
-                autoComplete="CV Link"
+                autoComplete="resume"
                 required
-                value={formData.resume}
-                onChange={handleChange}
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                onChange={(e) =>
+                  setFormData({ ...formData, resume: e.target.files[0] })
+                }
+                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 file:bg-transparent file:border-0 file:px-2 file:py-1 file:text-sm file:font-semibold file:text-gray-900 hover:file:bg-gray-50 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
           <div className="sm:col-span-2">
             <label
-              htmlFor="coverLetter"
+              htmlFor="cover-letter"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Cover Letter Link
+              Cover Letter
             </label>
             <div className="mt-2.5">
               <input
-                type="url"
+                type="file"
                 name="coverLetter"
-                id="coverLetter"
-                autoComplete="Cover-Letter"
+                id="cover-letter"
+                autoComplete="cover-letter"
                 required
-                value={formData.coverLetter}
-                onChange={handleChange}
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                onChange={(e) =>
+                  setFormData({ ...formData, coverLetter: e.target.files[0] })
+                }
+                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 file:bg-transparent file:border-0 file:px-2 file:py-1 file:text-sm file:font-semibold file:text-gray-900 hover:file:bg-gray-50 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
-          <div className="sm:col-span-2">
+          <div className="col-span-full">
             <label
-              htmlFor="aboutYourself"
+              htmlFor="about-yourself"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Tell us about Yourself
+              About Yourself
             </label>
             <div className="mt-2.5">
               <textarea
                 name="aboutYourself"
-                id="aboutYourself"
-                rows={4}
+                id="about-yourself"
+                rows="4"
                 required
                 value={formData.aboutYourself}
                 onChange={handleChange}
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
-              />
+              ></textarea>
             </div>
           </div>
           <Switch.Group as="div" className="flex gap-x-4 sm:col-span-2">
@@ -256,34 +260,33 @@ export default function ApplicationForm() {
                 onChange={setAgreed}
                 className={classNames(
                   agreed ? "bg-red-600" : "bg-gray-200",
-                  "flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                  "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-0 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
                 )}
               >
-                <span className="sr-only">Agree to policies</span>
                 <span
                   aria-hidden="true"
                   className={classNames(
-                    agreed ? "translate-x-3.5" : "translate-x-0",
-                    "h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out"
+                    agreed ? "translate-x-5" : "translate-x-0",
+                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
                   )}
                 />
               </Switch>
             </div>
             <Switch.Label className="text-sm leading-6 text-gray-600">
               By selecting this, you agree to our{" "}
-              <a href="/" className="font-semibold text-red-600">
+              <Link to="/privacy-policy" className="font-semibold text-red-600">
                 privacy&nbsp;policy
-              </a>
+              </Link>
               .
             </Switch.Label>
           </Switch.Group>
         </div>
         <div className="mt-10">
-          <button 
-            type="submit"
-            className="block w-full rounded-md bg-red-700 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          <button
+            type="handleSubmitApplication"
+            className="block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           >
-            Pass to the Quiz
+            Submit
           </button>
         </div>
       </form>

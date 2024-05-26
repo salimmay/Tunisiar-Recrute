@@ -9,8 +9,6 @@ import Blog from "../components/pages/Blog";
 import About from "../components/pages/About";
 import OfferDetailsItem from "../components/offers/OfferDetailsItem";
 import ForgotPassword from "../components/pages/ForgotPassword";
-import ApplicationForm from "../components/offers/ApplicationForm";
-import Quiz from "../components/offers/Quiz";
 import Error from "../components/pages/Error";
 
 const PublicRoutes = () => {
@@ -21,15 +19,13 @@ const PublicRoutes = () => {
       <Route path="/" element={<Main />} />
       <Route path="*" element={<Error />} />
       <Route path="/careers" element={<AllOffers />} />
+      <Route path="/offerDetailsItem/:id" element={<OfferDetailsItem />} />
       <Route path="/login" element={<Login />} />
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/about" element={<About />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/offerDetailsItem/:id" element={<OfferDetailsItem />} />
-      <Route path="/applicationForm" element={<ApplicationForm />} />
-      <Route path="/quiz" element={<Quiz />} />
     </Routes>
   );
 };

@@ -34,8 +34,9 @@ const getApplication = asyncHandler(async (req, res) => {
 // Create a new application
 const createApplication = asyncHandler(async (req, res) => {
   try {
+   console.log(req.body)
     const newApplication = await Application.create(req.body);
-    res.status(201).json(newApplication);
+    res.status(200).json({ok:'success'});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

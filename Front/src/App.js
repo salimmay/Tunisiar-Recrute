@@ -25,7 +25,7 @@ const App = () => {
         <Loader />
       ) : (
         <>
-          <NavBar />
+         <NavBar />
           <Render />
           <Footer />
         </>

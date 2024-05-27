@@ -11,7 +11,7 @@ function classNames(...classes) {
 
 export default function ApplicationForm() {
   const [agreed, setAgreed] = useState(false);
-  const { offerId } = useParams();
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,11 +21,11 @@ export default function ApplicationForm() {
     resume: "",
     coverLetter: "",
     aboutYourself: "",
-    internshipOfferId: offerId,
+    internshipOfferId: id,
   });
 
   const navigate = useNavigate();
-
+console.log(id)
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -34,14 +34,17 @@ export default function ApplicationForm() {
           throw new Error("User data is not available");
         }
         // Fetch user data based on the logged-in user ID
-        const response = await axios.get(`${API_URL}/users/user/${user.userId}`);
+        const response = await axios.get(
+          `${API_URL}/users/user/${user.userId}`
+        );
         // Set form data with user data
-        setFormData({
-          ...formData,
+        setFormData((prevFormData) => ({
+          ...prevFormData,
           firstName: response.data.firstName,
           lastName: response.data.lastName,
           email: response.data.email,
-        });
+          userId: user.userId,
+        }));
       } catch (error) {
         console.error("Error fetching user data:", error);
         // Redirect to the login page if user data is not available
@@ -50,14 +53,12 @@ export default function ApplicationForm() {
     };
 
     fetchUserData();
-  }, [formData, navigate]); // Make sure to add formData and navigate to the dependency array
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({  ...formData,   [name]: value, });
+  console.log(formData)
   };
 
   const handleSubmitApplication = async (e) => {
@@ -70,26 +71,22 @@ export default function ApplicationForm() {
         },
         body: JSON.stringify(formData),
       });
-
       const responseData = await response.json();
-
-      if (!response.ok) {
-        console.error('Response status:', response.status);
-        console.error('Response data:', responseData);
+      console.log(responseData)
+      if (!responseData.ok) {
+        console.error("Response status:", responseData);
+        console.error("Response data:", responseData);
         throw new Error("Application submission failed");
       }
       // Redirect to the quiz page
-      navigate(`/Quiz/${offerId}`);
+      navigate(`/Quiz/${id}`);
     } catch (error) {
-      console.error('Error message:', error.message);
+      console.error("Error message:", error.message);
     }
   };
+
   return (
     <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
-      <div
-        className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
-        aria-hidden="true"
-      ></div>
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Application Form

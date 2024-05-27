@@ -13,7 +13,7 @@ const Quiz = () => {
     // Fetch quiz questions from the API
     const fetchQuestions = async () => {
       try {
-        const response = await fetch(`${API_URL}/quizQuestions/${id}`);
+        const response = await fetch(`${API_URL}/quizQuestions/internship/${id}`);
         const data = await response.json();
         setQuestions(data);
         setAnswers(data.reduce((acc, _, idx) => ({ ...acc, [idx]: "" }), {}));
@@ -21,24 +21,37 @@ const Quiz = () => {
         console.error("Error fetching quiz questions:", error);
       }
     };
-
     fetchQuestions();
   }, [id]);
 
+  const [reply , setReply]= useState();
   const handleChange = (e, index) => {
     const { value } = e.target;
-    setAnswers({ ...answers, [index]: value });
+    setReply(value);
   };
 
   const handleSubmitQuiz = async (e) => {
     e.preventDefault();
+    const filteredAnswers = Object.fromEntries(
+      Object.entries(answers).filter(([_, value]) => value !== "")
+    );
     try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const data={
+        user:user.userId, 
+        internshipOffer:id,
+        questionId:questions[0]._id,
+        givenAnswer:reply,
+        isCorrect:questions[0].correctOption === reply,
+      }
+      console.log(data);
+
       const response = await fetch(`${API_URL}/quizResults/quiz-results`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ internshipOfferId: id, answers }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -54,38 +67,40 @@ const Quiz = () => {
   };
 
   return (
-    <div className="quiz-container">
-      <h2 className="quiz-title">Quiz</h2>
-      <form onSubmit={handleSubmitQuiz}>
-        {questions.map((question, index) => (
-          <div key={index} className="question-block">
-            <p className="question-text">{question.questionText}</p>
-            <div className="options-container">
-              {question.options.map((option, optionIndex) => (
-                <div key={optionIndex} className="option-block">
-                  <input
-                    type="radio"
-                    id={`option-${index}-${optionIndex}`}
-                    name={`question-${index}`}
-                    value={option}
-                    checked={answers[index] === option}
-                    onChange={(e) => handleChange(e, index)}
-                  />
-                  <label className="option-label" htmlFor={`option-${index}-${optionIndex}`}>
-                    {option}
-                  </label>
-                </div>
-              ))}
+    <section className="bg-white pt-20">
+      <div className="question-container">
+        <h2 className="quiz-title">Quiz</h2>
+        <form onSubmit={handleSubmitQuiz}>
+          {questions.map((question, index) => (
+            <div key={index} className="question-block">
+              <p className="question-text">{question.questionText}</p>
+              <div className="options-container">
+                {question.options.map((option, optionIndex) => (
+                  <div key={optionIndex} className="option-block">
+                    <input
+                      type="radio"
+                      id={`option-${index}-${optionIndex}`}
+                      name={`question-${index}`}
+                      value={option}
+                      checked={answers[index] === option}
+                      onChange={(e) => handleChange(e, index)}
+                    />
+                    <label className="option-label" htmlFor={`option-${index}-${optionIndex}`}>
+                      {option}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
+          ))}
+          <div className="button-container">
+            <button className="button-style" type="submit">
+              Submit Quiz
+            </button>
           </div>
-        ))}
-        <div className="button-container">
-          <button className="button-style" type="submit">
-            Submit Quiz
-          </button>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </section>
   );
 };
 

@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from '../../../../../config';
 
 const AddQuiz = () => {
-  const { internshipId } = useParams();
   const [questions, setQuestions] = useState([]);
   const [questionText, setQuestionText] = useState('');
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctOption, setCorrectOption] = useState('');
-
+  const url = window.location.href
+  const internshipId = url.split("/").slice(-1)[0]
+  console.log(internshipId)
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -18,7 +19,8 @@ const AddQuiz = () => {
           ...questions,
           { questionText, options, correctOption }
         ],
-        internshipOfferId: internshipId
+          internshipOfferId: internshipId
+        
       });
       // Reset the form for next question
       setQuestionText('');

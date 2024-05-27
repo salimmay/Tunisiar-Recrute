@@ -89,7 +89,7 @@ const AddInternshipOffer = () => {
         </button>
         {internshipId && (
           <Link
-            to={`AddQuiz/${internshipId}`}
+            to={`/profile/AddQuiz/${internshipId}`}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 ml-4"
           >
             Add Quiz

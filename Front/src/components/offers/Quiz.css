@@ -1,11 +1,10 @@
 .checked{
     color: #990000;
-
   }
 
   .question-container {
     max-width: 700px;
-    margin: 0 auto ;
+    margin-left: 30%;
     padding: 40px;
     border: 2px solid #990000;
     border-radius: 10px;

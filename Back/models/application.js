@@ -5,11 +5,11 @@ const Schema = mongoose.Schema;
 const applicationSchema = new Schema({
   firstName: {
     type: String,
-    required: true
+    required: false
   },
   lastName: {
     type: String,
-    required: true
+    required: false
   },
   university: {
     type: String,
@@ -36,8 +36,7 @@ const applicationSchema = new Schema({
     required: true
   },
   internshipOfferId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'InternshipOffer',
+    type: String,
     required: true
   },
   status: {
@@ -50,17 +49,13 @@ const applicationSchema = new Schema({
     enum: ['pending', 'approved', 'rejected'],
     default: 'pending'
   },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  internshipOffer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'InternshipOffer'
+  userId: {
+    type: String,
+    required: true
   },
   quizResult : {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'quizResult'
+    ref: 'QuizResult'
   }
 });
 

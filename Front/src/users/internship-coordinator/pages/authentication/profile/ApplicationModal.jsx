@@ -1,17 +1,25 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import API from "../../../../../service/api";
 
 export default function ApplicationModal({ open, setOpen, application }) {
+  const [quizResult, setQuizResult] = useState(null);
+
+  const getQuizResult = async () => {
+    try {
+      const user = await API.get(`/users/email/${application.email}`);
+      const quizResult = await API.get(`/quizResults/quiz-results/${user.data._id}`);
+      console.log(quizResult);
+      setQuizResult(quizResult);
+    } catch (error) {
+      console.error("Error fetching quiz results:", error);
+    }
+  };
+
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed inset-0 overflow-hidden"
-        onClose={setOpen}
-      >
+      <Dialog as="div" className="fixed inset-0 overflow-hidden" onClose={setOpen}>
         <div className="absolute inset-0 overflow-hidden">
           <Dialog.Overlay className="absolute inset-0" />
 
@@ -30,7 +38,7 @@ export default function ApplicationModal({ open, setOpen, application }) {
                   <div className="px-4 sm:px-6">
                     <div className="flex items-start justify-between">
                       <Dialog.Title className="text-lg font-medium text-red-900">
-                        <h1> Application Details </h1>
+                        <h1>Application Details</h1>
                       </Dialog.Title>
                       <div className="ml-3 h-7 flex items-center">
                         <button
@@ -45,54 +53,43 @@ export default function ApplicationModal({ open, setOpen, application }) {
                     </div>
                   </div>
                   <div className="mt-6 relative flex-1 px-4 sm:px-6">
-                    
-                    <p className="text-2xl text-gray-400"> First Name: </p>
-                    <p className=" text-2xl text-gray-900">
-                      {" "}
-                      {application.firstName}{" "}
-                    </p>
-                    <hr className="p-4"/>
-                    <p className="text-2xl text-gray-400"> Last Name: </p>
-                    <p className=" text-2xl text-gray-900">
-                      {" "}
-                      {application.lastName}
-                    </p>
-                    <hr className="p-4"/>
-                    <p className="text-2xl text-gray-400"> Email: </p>
-                    <p className=" text-2xl text-gray-900">
-                      {application.email}
-                    </p>{" "}
-                    <hr className="p-4"/>
+                    <p className="text-2xl text-gray-400">First Name:</p>
+                    <p className="text-2xl text-gray-900">{application.firstName}</p>
+                    <hr className="my-4" />
+                    <p className="text-2xl text-gray-400">Last Name:</p>
+                    <p className="text-2xl text-gray-900">{application.lastName}</p>
+                    <hr className="my-4" />
+                    <p className="text-2xl text-gray-400">Email:</p>
+                    <p className="text-2xl text-gray-900">{application.email}</p>
+                    <hr className="my-4" />
                     <p className="text-2xl text-gray-400">University:</p>
-                    <p className=" text-2xl text-gray-900">
-                      {" "}
-                      {application.university}
-                    </p>{" "}
-                    <hr className="p-4"/>
-                    <p className="text-2xl text-gray-400">Phone Number: </p>
-                    <p className=" text-2xl text-gray-900">
-                      {" "}
-                      {application.phoneNumber}
-                    </p>{" "}
-                    <hr className="p-4"/>
-                    <p className="text-2xl text-gray-400">Cover Letter: </p>
-                    <a href='#' className=" text-2xl text-red-600">
-                      {application.coverLetter}
-                    </a>{" "}
-                    <hr className="p-4"/>
-                    <p className="text-2xl text-gray-400">Resume: </p>
-                    <a  href='#' className=" text-2xl text-red-600">
-                      {application.resume}
-                    </a>{" "}
-                    <hr className="p-4"/>
-                    <p className="text-2xl text-gray-400"> About Yourself: </p>
-                    <p className=" text-2xl text-gray-900">
-                      {" "}
-                      {application.aboutYourself}
-                    </p>{" "}
-                    <hr className="p-4"/>
-                    <button className="bg-red-600 p-3 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                     Quiz results</button>
+                    <p className="text-2xl text-gray-900">{application.university}</p>
+                    <hr className="my-4" />
+                    <p className="text-2xl text-gray-400">Phone Number:</p>
+                    <p className="text-2xl text-gray-900">{application.phoneNumber}</p>
+                    <hr className="my-4" />
+                    <p className="text-2xl text-gray-400">Cover Letter:</p>
+                    <a href="#" className="text-2xl text-red-600">{application.coverLetter}</a>
+                    <hr className="my-4" />
+                    <p className="text-2xl text-gray-400">Resume:</p>
+                    <a href="#" className="text-2xl text-red-600">{application.resume}</a>
+                    <hr className="my-4" />
+                    <p className="text-2xl text-gray-400">About Yourself:</p>
+                    <p className="text-2xl text-gray-900">{application.aboutYourself}</p>
+                    <hr className="my-4" />
+                    {quizResult ? (
+                      <div>
+                        <p className="text-2xl text-gray-400">Quiz Score:</p>
+                        <div className="text-2xl text-gray-900">{quizResult.data[0].score}</div>
+                      </div>
+                    ) : (
+                      <button
+                        className="bg-red-600 p-3 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        onClick={getQuizResult}
+                      >
+                        Quiz results
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

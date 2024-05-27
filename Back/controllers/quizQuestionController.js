@@ -4,6 +4,7 @@ const QuizQuestion = require('../models/quizQuestion');
 const getQuizQuestions = asyncHandler(async (req, res) => {
   try {
     const quizQuestions = await QuizQuestion.find();
+    console.log(quizQuestions[0].internshipOffer)
     res.json(quizQuestions);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -13,6 +14,20 @@ const getQuizQuestions = asyncHandler(async (req, res) => {
 const getQuizQuestion = asyncHandler(async (req, res) => {
   try {
     const quizQuestion = await QuizQuestion.findById(req.params.id);
+    if (!quizQuestion) {
+      return res.status(404).json({ message: 'Quiz question not found' });
+    }
+    res.json(quizQuestion);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+const getInternshipQuizQuestion = asyncHandler(async (req, res) => {
+  try {
+    const quizQuestion = await QuizQuestion.find({ "internshipOffer": req.params.id});
+    console.log(quizQuestion)
     if (!quizQuestion) {
       return res.status(404).json({ message: 'Quiz question not found' });
     }
@@ -61,6 +76,7 @@ const deleteQuizQuestion = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  getInternshipQuizQuestion,
   getQuizQuestions,
   getQuizQuestion,
   createQuizQuestions,

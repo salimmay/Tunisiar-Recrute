@@ -11,7 +11,6 @@ const AllOffers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchDepartment, setSearchDepartment] = useState("");
   const [searchLocation, setSearchLocation] = useState("");
-  const [searchType, setSearchType] = useState("");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   
   useEffect(() => {
@@ -38,11 +37,10 @@ const AllOffers = () => {
       const titleMatch = offer.title.toLowerCase().includes(searchTerm.toLowerCase());
       const departmentMatch = offer.department.toLowerCase().includes(searchDepartment.toLowerCase());
       const locationMatch = offer.location.toLowerCase().includes(searchLocation.toLowerCase());
-      const typeMatch = !searchType || offer.type.toLowerCase().includes(searchType.toLowerCase());
-      return titleMatch && departmentMatch && locationMatch && typeMatch;
+      return titleMatch && departmentMatch && locationMatch;
     });
     setFilteredOffers(filtered);
-  }, [offers, searchTerm, searchDepartment, searchLocation, searchType]);
+  }, [offers, searchTerm, searchDepartment, searchLocation, ]);
 
   // Rest of the component remains unchanged
   return (
@@ -98,8 +96,6 @@ const AllOffers = () => {
                   setSearchDepartment={setSearchDepartment}
                   searchLocation={searchLocation}
                   setSearchLocation={setSearchLocation}
-                  searchType={searchType}
-                  setSearchType={setSearchType}
                 />
               </form>
             </div>
@@ -143,8 +139,6 @@ const AllOffers = () => {
                   setSearchDepartment={setSearchDepartment}
                   searchLocation={searchLocation}
                   setSearchLocation={setSearchLocation}
-                  searchType={searchType}
-                  setSearchType={setSearchType}
                 />
               </form>
             </div>

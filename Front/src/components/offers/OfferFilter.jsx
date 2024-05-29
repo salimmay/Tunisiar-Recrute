@@ -53,22 +53,6 @@ const OfferFilter = ({
           placeholder="Search by location"
         />
       </div>
-
-      <div>
-        <label htmlFor="type" className="block text-sm font-medium leading-5 text-gray-700">
-          Type
-        </label>
-        <select
-          id="type"
-          value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50"
-        >
-          <option value="">Select Offer type</option>
-          <option value="binome">Binome</option>
-          <option value="monome">Monome</option>
-        </select>
-      </div>
     </form>
   );
 };

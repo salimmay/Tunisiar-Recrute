@@ -83,13 +83,14 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 // Update a user by ID
 const updateUser = asyncHandler(async (req, res) => {
-  const { email, firstname, lastname, role, password } = req.body;
+  const { email, firstname, lastname, role, password, supervisedInterns } = req.body;
 
   let updatedInfo = {
     email,
     firstname,
     lastname,
     role,
+    supervisedInterns
   };
   // If password is provided, hash it and add to the update info
   if (password) {

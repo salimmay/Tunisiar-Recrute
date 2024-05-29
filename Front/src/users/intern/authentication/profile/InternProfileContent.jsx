@@ -16,6 +16,7 @@ function InternProfileContent() {
     if (storedUser) {
       const user = JSON.parse(storedUser);
       setUserId(user.userId);
+      console.log('usseer id',userId)
     }
   }, []);
 

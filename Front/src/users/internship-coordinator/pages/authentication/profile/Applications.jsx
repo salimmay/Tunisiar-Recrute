@@ -119,6 +119,7 @@ function ApplicationsDetails() {
               <div className="text-gray-500">
                 <select
                   value={application.status}
+                  onClick={(e) => e.stopPropagation()} // Prevent the modal from opening when changing the status
                   onChange={(e) =>
                     handleStatusChangeRequest(application._id, e.target.value)
                   }

@@ -9,7 +9,7 @@ const {
 } = require('../controllers/applicationController');
 
   router.get('/', getApplications);
-  router.get('/:id', getApplication);
+  router.get('/:userId', getApplication);
   router.post('/create', createApplication);
   router.put('/:id', updateApplication);
   router.delete('/:id', deleteApplication);

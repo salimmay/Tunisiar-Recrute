@@ -17,7 +17,7 @@ function AddWorkshop() {
   useEffect(() => {
     const fetchSupervisedUsers = async () => {
       try {
-        const response = await axios.get(`${API_URL}/applications?supervisionStatus==approved`);
+        const response = await axios.get(`${API_URL}/applications?supervisionStatus=approved`);
         setSupervisedUsers(response.data);
       } catch (error) {
         console.error('Error fetching supervised users:', error);

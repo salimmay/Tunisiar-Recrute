@@ -8,13 +8,28 @@ function SupervisorDashboard() {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const [UserId, setUserId] = useState(null); // Ensure UserId is not initially false
+  const [modificationSuccess, setModificationSuccess] = useState(false);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        console.log("Fetched user:", user); // Debug log
+        setUserId(user.userId); // Set the user ID state
+      }
+    };
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     const fetchApprovedApplications = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/applications?status=approved`
+          `${API_URL}/applications?supervisionStatus=approved`
         );
+        console.log("Fetched applications:", response.data); // Debug log
         setApplications(response.data);
       } catch (error) {
         console.error("Error fetching approved applications:", error);
@@ -24,38 +39,77 @@ function SupervisorDashboard() {
   }, []);
 
   const handleSupervisionStatusChange = (id, supervisionStatus) => {
-    setSelectedApplication(
-      applications.find((application) => application._id === id)
+    console.log("Status change initiated:", { id, supervisionStatus }); // Debug log
+    const selectedApp = applications.find(
+      (application) => application._id === id
     );
+    if (!selectedApp) {
+      console.error("Selected application not found:", id); // Debug log
+      return;
+    }
+    setSelectedApplication({
+      ...selectedApp,
+      supervisionStatus: supervisionStatus, // Update the supervisionStatus
+    });
     setConfirmationOpen(true);
   };
 
   const handleConfirmStatusChange = async () => {
-    if (selectedApplication) {
+    console.log("Confirm status change called"); // Debug log
+    console.log("Selected application:", selectedApplication); // Debug log
+    console.log("UserId:", UserId); // Debug log
+
+    if (selectedApplication && UserId) {
       try {
+        console.log("Updating supervision status for:", selectedApplication); // Debug log
+
+        // Update the application's supervisionStatus
         await axios.put(`${API_URL}/applications/${selectedApplication._id}`, {
-          status: selectedApplication.supervisionStatus,
+          supervisionStatus: selectedApplication.supervisionStatus,
         });
+
+        const internID = selectedApplication.userId;
+        console.log("Intern ID:", internID); // Debug log
+
+        // Update the supervisor's supervisedInterns array with the intern's userId
+        await axios.put(`${API_URL}/users/user/${UserId}`, {
+          $push: { supervisedInterns: internID },
+        });
+
+        // Update the local state with the updated supervisionStatus
         setApplications((prevApplications) =>
           prevApplications.map((application) =>
             application._id === selectedApplication._id
               ? {
                   ...application,
-                  status: selectedApplication.supervisionStatus,
+                  supervisionStatus: selectedApplication.supervisionStatus,
                 }
               : application
           )
         );
+
+        // Set modificationSuccess to true
+        setModificationSuccess(true);
       } catch (error) {
         console.error("Error updating supervision status:", error);
       } finally {
         setConfirmationOpen(false);
         setSelectedApplication(null);
       }
+    } else {
+      console.error("Selected application or UserId is missing."); // Debug log
     }
   };
 
+  useEffect(() => {
+    if (modificationSuccess) {
+      alert("Modification successful");
+      window.location.reload();
+    }
+  }, [modificationSuccess]);
+
   const handleCancelStatusChange = () => {
+    console.log("Status change cancelled"); // Debug log
     setConfirmationOpen(false);
     setSelectedApplication(null);
   };
@@ -67,7 +121,7 @@ function SupervisorDashboard() {
         {applications.map((application) => (
           <li
             key={application._id}
-            className="p-4 border border-gray-200 rounded-md shadow-md hover:shadow-lg cursor-pointer w-full"
+            className="p-4 border-b border-gray-200 cursor-pointer rounded-md shadow-md hover:shadow-lg"
             onClick={() => {
               setSelectedApplication(application);
               setOpen(true);
@@ -86,7 +140,7 @@ function SupervisorDashboard() {
                 onChange={(e) =>
                   handleSupervisionStatusChange(application._id, e.target.value)
                 }
-                className="p-2 border border-gray-300 rounded-md"
+                className="p-2 border border-gray-300 rounded-sm focus:ring-red-500"
               >
                 <option value="pending">Pending</option>
                 <option value="approved">Approve Supervision</option>

@@ -10,6 +10,7 @@ function ApplicationsDetails() {
   const [open, setOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [statusChange, setStatusChange] = useState({ id: null, newStatus: "" });
+  const [modificationSuccess, setModificationSuccess] = useState(false);
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -82,12 +83,18 @@ function ApplicationsDetails() {
             application.department.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
+    setModificationSuccess(true);
     } catch (error) {
       console.error('Error updating application status:', error);
     }
     setConfirmationOpen(false);
   };
-
+  useEffect(() => {
+    if (modificationSuccess) {
+      alert("Modification successful");
+      window.location.reload();
+    }
+  }, [modificationSuccess]);
   const handleCancelStatusChange = () => {
     setConfirmationOpen(false);
     setStatusChange({ id: null, newStatus: "" });

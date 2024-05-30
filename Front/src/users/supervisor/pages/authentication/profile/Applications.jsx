@@ -27,7 +27,7 @@ function SupervisorDashboard() {
     const fetchApprovedApplications = async () => {
       try {
         const response = await axios.get(
-          `${API_URL}/applications?supervisionStatus=approved`
+          `${API_URL}/applications?status=approved`
         );
         console.log("Fetched applications:", response.data); // Debug log
         setApplications(response.data);
@@ -62,20 +62,16 @@ function SupervisorDashboard() {
     if (selectedApplication && UserId) {
       try {
         console.log("Updating supervision status for:", selectedApplication); // Debug log
-
         // Update the application's supervisionStatus
         await axios.put(`${API_URL}/applications/${selectedApplication._id}`, {
           supervisionStatus: selectedApplication.supervisionStatus,
         });
-
         const internID = selectedApplication.userId;
         console.log("Intern ID:", internID); // Debug log
-
         // Update the supervisor's supervisedInterns array with the intern's userId
         await axios.put(`${API_URL}/users/user/${UserId}`, {
           $push: { supervisedInterns: internID },
         });
-
         // Update the local state with the updated supervisionStatus
         setApplications((prevApplications) =>
           prevApplications.map((application) =>
@@ -87,7 +83,6 @@ function SupervisorDashboard() {
               : application
           )
         );
-
         // Set modificationSuccess to true
         setModificationSuccess(true);
       } catch (error) {
@@ -100,7 +95,6 @@ function SupervisorDashboard() {
       console.error("Selected application or UserId is missing."); // Debug log
     }
   };
-
   useEffect(() => {
     if (modificationSuccess) {
       alert("Modification successful");
@@ -150,7 +144,6 @@ function SupervisorDashboard() {
           </li>
         ))}
       </ul>
-
       {selectedApplication && open && (
         <ApplicationModal
           application={selectedApplication}

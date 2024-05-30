@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Quiz.css";
 import { API_URL } from "../../config";
-
+import axios from "axios";
 const Quiz = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
@@ -10,7 +10,6 @@ const Quiz = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch quiz questions from the API
     const fetchQuestions = async () => {
       try {
         const response = await fetch(`${API_URL}/quizQuestions/internship/${id}`);
@@ -24,10 +23,12 @@ const Quiz = () => {
     fetchQuestions();
   }, [id]);
 
-  const [reply , setReply]= useState();
   const handleChange = (e, index) => {
     const { value } = e.target;
-    setReply(value);
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [index]: value,
+    }));
   };
 
   const handleSubmitQuiz = async (e) => {
@@ -35,15 +36,18 @@ const Quiz = () => {
     const filteredAnswers = Object.fromEntries(
       Object.entries(answers).filter(([_, value]) => value !== "")
     );
+
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      const data={
-        user:user.userId, 
-        internshipOffer:id,
-        questionId:questions[0]._id,
-        givenAnswer:reply,
-        isCorrect:questions[0].correctOption === reply,
-      }
+      const data = {
+        user: user.userId,
+        internshipOffer: id,
+        answers: questions.map((question, index) => ({
+          questionId: question._id,
+          givenAnswer: filteredAnswers[index],
+        })),
+      };
+
       console.log(data);
 
       const response = await fetch(`${API_URL}/quizResults/quiz-results`, {
@@ -52,7 +56,7 @@ const Quiz = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      });
+      });      
 
       if (!response.ok) {
         throw new Error("Quiz submission failed");

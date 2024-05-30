@@ -20,7 +20,6 @@ function ManageInternshipOffer() {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-
         setOffersData(response.data);
         setLoading(false);
       } catch (error) {
@@ -32,13 +31,9 @@ function ManageInternshipOffer() {
     fetchOffersData();
   }, []);
 
-  const handleDeleteOffer = async (offerId) => {
-    try {
-      setSelectedOfferId(offerId);
-      setShowConfirmation(true);
-    } catch (error) {
-      setError(error);
-    }
+  const handleDeleteOffer = (offerId) => {
+    setSelectedOfferId(offerId);
+    setShowConfirmation(true);
   };
 
   const handleConfirmOfferDeletion = async () => {
@@ -113,6 +108,7 @@ function ManageInternshipOffer() {
         </dl>
       </div>
 
+      {showConfirmation && (
         <div className="confirmation mt-4">
           <div className="text-right confirmation-content">
             <p>Are you sure you want to delete this offer?</p>
@@ -132,6 +128,7 @@ function ManageInternshipOffer() {
             </div>
           </div>
         </div>
+      )}
     </>
   );
 }

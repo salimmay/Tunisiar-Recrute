@@ -9,18 +9,16 @@ const AddQuiz = () => {
   const [correctOption, setCorrectOption] = useState('');
   const url = window.location.href
   const internshipId = url.split("/").slice(-1)[0]
-  console.log(internshipId)
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_URL}/quizQuestions/`, {
+      await axios.post(`${API_URL}/quizQuestions/quiz`, {
         questions: [
           ...questions,
           { questionText, options, correctOption }
         ],
           internshipOfferId: internshipId
-        
       });
       // Reset the form for next question
       setQuestionText('');

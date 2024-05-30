@@ -39,18 +39,23 @@ const getInternshipQuizQuestion = asyncHandler(async (req, res) => {
 
 const createQuizQuestions = asyncHandler(async (req, res) => {
   try {
-    const internshipOfferId = req.body.internshipOfferId;
-    const questions = req.body.questions.map(question => ({
+    const { internshipOfferId, questions } = req.body;
+
+    if (!internshipOfferId || !questions) {
+      return res.status(400).json({ error: 'Internship offer ID and questions are required' });
+    }
+
+    const formattedQuestions = questions.map(question => ({
       ...question,
       internshipOffer: internshipOfferId
     }));
-    const quizQuestions = await QuizQuestion.insertMany(questions);
+
+    const quizQuestions = await QuizQuestion.insertMany(formattedQuestions);
     res.status(201).json(quizQuestions);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 const updateQuizQuestion = asyncHandler(async (req, res) => {
   try {
     const updatedQuizQuestion = await QuizQuestion.findByIdAndUpdate(req.params.id, req.body, { new: true });

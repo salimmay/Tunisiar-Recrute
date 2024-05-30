@@ -46,12 +46,16 @@ export default function LoginItem() {
       localStorage.setItem("user", JSON.stringify(res.data));
       navigate("/");
     } catch (error) {
-      if (
-        error.response &&
-        error.response.status >= 400 &&
-        error.response.status <= 500
-      ) {
-        setError(error.response.data.message);
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError("Invalid email or password. Please try again.");
+        } else if (error.response.status >= 401 && error.response.status <= 403) {
+          setError("Unauthorized access. Please check your credentials.");
+        } else {
+          setError("An unexpected error occurred. Please try again later.");
+        }
+      } else {
+        setError("Network error. Please check your connection.");
       }
     }
   };
@@ -120,6 +124,8 @@ export default function LoginItem() {
                 autoFocus
                 value={formData.email}
                 onChange={handleChange}
+                error={!!error}
+                helperText={error && "Invalid email or password. Please try again."}
               />
               <TextField
                 required
@@ -131,6 +137,8 @@ export default function LoginItem() {
                 autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
+                error={!!error}
+                helperText={error && "Invalid email or password. Please try again."}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

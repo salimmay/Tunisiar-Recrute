@@ -60,7 +60,7 @@ function ModifyOffer() {
   };
 
   const handleModifyQuiz = () => {
-    navigate(`/profile/ModifyOffer/ModifyQuiz/${offerId}`);
+    navigate(`/profile/ModifyQuiz/${offerId}`);
   };
 
   if (loading) return <div>Loading...</div>;

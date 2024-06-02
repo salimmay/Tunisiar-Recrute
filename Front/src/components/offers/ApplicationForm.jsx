@@ -25,7 +25,8 @@ export default function ApplicationForm() {
   });
 
   const navigate = useNavigate();
-console.log(id)
+  console.log(id);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -57,22 +58,29 @@ console.log(id)
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({  ...formData,   [name]: value, });
-  console.log(formData)
+    setFormData({ ...formData, [name]: value });
+    console.log(formData);
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({ ...formData, [name]: files[0] });
   };
 
   const handleSubmitApplication = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${API_URL}/applications/create`, {
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        formDataToSend.append(key, formData[key]);
+      });
+
+      const response = await fetch(`${API_URL}/applications/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
       const responseData = await response.json();
-      console.log(responseData)
+      console.log(responseData);
       if (!responseData.ok) {
         console.error("Response status:", responseData);
         console.error("Response data:", responseData);
@@ -198,8 +206,6 @@ console.log(id)
                   className="h-full rounded-md border-0 bg-transparent bg-none py-0 pl-4 pr-9 text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm"
                 >
                   <option>TN</option>
-                  <option>DA</option>
-                  <option>EU</option>
                 </select>
                 <ChevronDownIcon
                   className="pointer-events-none absolute right-3 top-0 h-full w-5 text-gray-400"
@@ -214,6 +220,8 @@ console.log(id)
                 required
                 value={formData.phoneNumber}
                 onChange={handleChange}
+                pattern="[0-9]*"
+                inputMode="numeric"
                 className="block w-full rounded-md border-0 px-3.5 py-2 pl-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -223,15 +231,16 @@ console.log(id)
               htmlFor="resume"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Resume
+              CV (PDF)
             </label>
             <div className="mt-2.5">
               <input
-                type="text"
+                type="file"
                 name="resume"
                 id="resume"
+                accept="application/pdf"
                 required
-                onChange={handleChange}
+                onChange={handleFileChange}
                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               />
             </div>
@@ -241,14 +250,15 @@ console.log(id)
               htmlFor="cover-letter"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Cover Letter
+              Cover Letter (PDF)
             </label>
             <div className="mt-2.5">
               <input
-                type="text"
+                type="file"
                 name="coverLetter"
                 id="cover-letter"
-                onChange={handleChange}
+                accept="application/pdf"
+                onChange={handleFileChange}
                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               />
             </div>
@@ -265,7 +275,6 @@ console.log(id)
                 name="aboutYourself"
                 id="about-yourself"
                 rows="4"
-                required
                 value={formData.aboutYourself}
                 onChange={handleChange}
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"

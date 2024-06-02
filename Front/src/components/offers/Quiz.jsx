@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./Quiz.css";
 import { API_URL } from "../../config";
 import axios from "axios";
+
 const Quiz = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);

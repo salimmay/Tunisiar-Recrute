@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const uploadFiles = require('../middleware/multer');
 const {
   getApplications,
   getApplication,
@@ -8,10 +9,11 @@ const {
   deleteApplication
 } = require('../controllers/applicationController');
 
-  router.get('/', getApplications);
-  router.get('/:userId', getApplication);
-  router.post('/create', createApplication);
-  router.put('/:id', updateApplication);
-  router.delete('/:id', deleteApplication);
+// Define routes
+router.get('/', getApplications);
+router.get('/:userId', getApplication);
+router.post('/', uploadFiles, createApplication);
+router.put('/:id', updateApplication);
+router.delete('/:id', deleteApplication);
 
 module.exports = router;

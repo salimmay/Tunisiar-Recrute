@@ -60,7 +60,7 @@ function Applications() {
   return (
     <div className="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
       <h3 className="text-lg leading-6 font-medium text-gray-900">
-        Interns applied
+        Internships applied
       </h3>
       <div className="mt-4">
         {Object.keys(applications).length === 0 ? (
@@ -81,9 +81,6 @@ function Applications() {
                 </p>
                 <p className="text-sm text-gray-500">
                   Application Status: {applications.status}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Supervision Status: {applications.supervisionStatus}{" "}
                 </p>
               </div>
             </li>

@@ -120,7 +120,6 @@ const setUser = asyncHandler(async (req, res) => {
   }
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
   const newUser = new User({
     email: req.body.email,
     firstname: req.body.firstname,
@@ -128,7 +127,6 @@ const setUser = asyncHandler(async (req, res) => {
     role: req.body.role,
     password: hashedPassword,
   });
-
   try {
     await newUser.save();
     res.json({ message: "User successfully saved" });

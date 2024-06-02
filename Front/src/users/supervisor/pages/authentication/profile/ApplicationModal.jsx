@@ -14,7 +14,7 @@ function ApplicationModal({ application, onClose }) {
         const response = await API.get(`/quizResults/${application.id}`);
         setQuizResults(response.data);
       } catch (error) {
-        setQuizResults(null); 
+        setQuizResults(null);
       } finally {
         setLoading(false);
       }
@@ -58,8 +58,12 @@ function ApplicationModal({ application, onClose }) {
             <p className="text-sm text-gray-500">Email: {application.email}</p>
             <p className="text-sm text-gray-500">University: {application.university}</p>
             <p className="text-sm text-gray-500">Phone Number: {application.phoneNumber}</p>
-            <p className="text-sm text-gray-500">Cover Letter: {application.coverLetter}</p>
-            <p className="text-sm text-gray-500">Resume: {application.resume}</p>
+            <p className="text-sm text-gray-500">
+              Cover Letter: <a href={application.coverLetter} download className="text-red-600">Download Cover Letter</a>
+            </p>
+            <p className="text-sm text-gray-500">
+              Resume: <a href={application.resume} download className="text-red-600">Download Resume</a>
+            </p>
             <p className="text-sm text-gray-500">About Yourself: {application.aboutYourself}</p>
             <p className="text-sm text-gray-500">Status: {status}</p>
             <div className="mt-4">

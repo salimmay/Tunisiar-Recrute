@@ -33,12 +33,9 @@ const Quiz = () => {
       [index]: value,
     }));
   };
+
   const handleSubmitQuiz = async (e) => {
     e.preventDefault();
-
-    const filteredAnswers = Object.fromEntries(
-      Object.entries(answers).filter(([_, value]) => value !== "")
-    );
 
     try {
       const user = JSON.parse(localStorage.getItem("user"));
@@ -47,8 +44,8 @@ const Quiz = () => {
         internshipOffer: id,
         answers: questions.map((question, index) => ({
           questionId: question._id,
-          correctOption: filteredAnswers[index], // Ensure it is not undefined
-          isCorrect: question.correctOption === filteredAnswers[index],
+          givenAnswer: answers[index] || "", // Ensure `givenAnswer` is included
+          isCorrect: question.correctOption === answers[index],
         })),
       };
 
@@ -69,7 +66,6 @@ const Quiz = () => {
           `Quiz submission failed: ${errorData.message || response.statusText}`
         );
       }
-
       console.log("Quiz results submitted successfully");
       alert("Application Submitted, You will be hearing from us soon");
       navigate("/");
@@ -80,7 +76,6 @@ const Quiz = () => {
       );
     }
   };
-
   return (
     <section className="bg-white pt-20">
       <div className="question-container">

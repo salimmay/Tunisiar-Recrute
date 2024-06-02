@@ -18,8 +18,8 @@ export default function ApplicationForm() {
     university: "",
     email: "",
     phoneNumber: "",
-    resume: "",
-    coverLetter: "",
+    resume: null,
+    coverLetter: null,
     aboutYourself: "",
     internshipOfferId: id,
   });
@@ -196,22 +196,6 @@ export default function ApplicationForm() {
               Phone number
             </label>
             <div className="relative mt-2.5">
-              <div className="absolute inset-y-0 left-0 flex items-center">
-                <label htmlFor="country" className="sr-only">
-                  Country code
-                </label>
-                <select
-                  id="country"
-                  name="country"
-                  className="h-full rounded-md border-0 bg-transparent bg-none py-0 pl-4 pr-9 text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm"
-                >
-                  <option>TN</option>
-                </select>
-                <ChevronDownIcon
-                  className="pointer-events-none absolute right-3 top-0 h-full w-5 text-gray-400"
-                  aria-hidden="true"
-                />
-              </div>
               <input
                 type="tel"
                 name="phoneNumber"
@@ -220,9 +204,7 @@ export default function ApplicationForm() {
                 required
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                pattern="[0-9]*"
-                inputMode="numeric"
-                className="block w-full rounded-md border-0 px-3.5 py-2 pl-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
@@ -231,88 +213,99 @@ export default function ApplicationForm() {
               htmlFor="resume"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              CV (PDF)
+              Resume
             </label>
             <div className="mt-2.5">
               <input
                 type="file"
                 name="resume"
                 id="resume"
-                accept="application/pdf"
                 required
+                accept=".pdf,.doc,.docx"
                 onChange={handleFileChange}
-                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                className="block w-full text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
           <div className="sm:col-span-2">
             <label
-              htmlFor="cover-letter"
+              htmlFor="coverLetter"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Cover Letter (PDF)
+              Cover Letter
             </label>
             <div className="mt-2.5">
               <input
                 type="file"
                 name="coverLetter"
-                id="cover-letter"
-                accept="application/pdf"
+                id="coverLetter"
+                required
+                accept=".pdf,.doc,.docx"
                 onChange={handleFileChange}
-                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                className="block w-full text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
           <div className="sm:col-span-2">
             <label
-              htmlFor="about-yourself"
+              htmlFor="aboutYourself"
               className="block text-sm font-semibold leading-6 text-gray-900"
             >
-              Tell us about yourself
+              About Yourself
             </label>
             <div className="mt-2.5">
               <textarea
                 name="aboutYourself"
-                id="about-yourself"
-                rows="4"
+                id="aboutYourself"
                 value={formData.aboutYourself}
                 onChange={handleChange}
+                rows="4"
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
               ></textarea>
             </div>
           </div>
-          <div className="flex gap-x-4 sm:col-span-2">
-            <Switch
-              checked={agreed}
-              onChange={setAgreed}
-              className={classNames(
-                agreed ? "bg-red-600" : "bg-gray-200",
-                "relative inline-flex flex-shrink-0 h-6 w-11 border-0 rounded-full cursor-pointer transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
-              )}
-            >
-              <span
-                aria-hidden="true"
+        </div>
+        <div className="mt-10">
+          <Switch.Group as="div" className="flex gap-x-4">
+            <div className="flex h-6 items-center">
+              <Switch
+                checked={agreed}
+                onChange={setAgreed}
                 className={classNames(
-                  agreed ? "translate-x-5" : "translate-x-0",
-                  "inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition-transform duration-200 ease-in-out"
+                  agreed ? "bg-red-600" : "bg-gray-200",
+                  "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-0 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
                 )}
-              />
-            </Switch>
-            <label className="text-sm leading-6 text-gray-600">
-              By applying, you agree to our{" "}
-              <Link to="#" className="font-semibold text-red-600">
+              >
+                <span
+                  aria-hidden="true"
+                  className={classNames(
+                    agreed ? "translate-x-5" : "translate-x-0",
+                    "inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                  )}
+                />
+              </Switch>
+            </div>
+            <Switch.Label className="text-sm leading-6 text-gray-600">
+              By selecting this, you agree to our{" "}
+              <Link to="/terms" className="font-semibold text-red-600">
                 terms and conditions
               </Link>
               .
-            </label>
-          </div>
+            </Switch.Label>
+          </Switch.Group>
         </div>
         <div className="mt-10">
           <button
             type="submit"
-            className="block w-full rounded-md bg-red-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            disabled={!agreed}
+            className={classNames(
+              agreed
+                ? "bg-red-600 hover:bg-red-500 focus-visible:outline-red-600"
+                : "bg-gray-400 cursor-not-allowed",
+              "block w-full rounded-md py-2 px-4 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            )}
           >
-            Apply
+            Submit Application
           </button>
         </div>
       </form>

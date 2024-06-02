@@ -30,9 +30,11 @@ function AddUser() {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      alert("User added successfully");
       navigate("/profile/AdministratorProfileContent");
     } catch (error) {
       console.error("Error adding profile:", error);
+      alert("There was an error adding the profile: " + error.message);
     }
   };
 

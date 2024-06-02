@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const fileUpload = require('express-fileupload');
 require("dotenv").config();
 const mongoose = require("mongoose");
-const uploadFiles = require("./middleware/multer");
 
 // Connect to MongoDB
 const mongoURI = process.env.MONGODB_URI;
@@ -26,6 +26,7 @@ app.use(cors()); // Enable CORS
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json({ limit: "50mb" }));
+app.use(fileUpload());
 app.use(function (req, res, next) {
   res.header("Content-Type", "application/json;charset=UTF-8");
   res.header("Access-Control-Allow-Credentials", true);
@@ -36,10 +37,8 @@ app.use(function (req, res, next) {
   next();
 });
 
-// Apply uploadFiles middleware to specific routes for handling file uploads
-app.post("/upload", uploadFiles, (req, res) => {
-  // Handle file upload logic here
-  res.send("File uploaded successfully");
+app.post('/upload', function(req, res) {
+  console.log(req.files.foo); // the uploaded file object
 });
 
 // Routes

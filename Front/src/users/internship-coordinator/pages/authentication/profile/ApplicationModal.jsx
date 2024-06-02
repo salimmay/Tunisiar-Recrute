@@ -16,6 +16,7 @@ export default function ApplicationModal({ open, setOpen, application }) {
       console.error("Error fetching quiz results:", error);
     }
   };
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="fixed inset-0 overflow-hidden" onClose={setOpen}>
@@ -68,10 +69,14 @@ export default function ApplicationModal({ open, setOpen, application }) {
                     <p className="text-2xl text-gray-900">{application.phoneNumber}</p>
                     <hr className="my-4" />
                     <p className="text-2xl text-gray-400">Cover Letter:</p>
-                    <a href="*" className="text-2xl text-red-600">{application.coverLetter}</a>
+                    <a href={application.coverLetter} download className="text-2xl text-red-600">
+                      Download Cover Letter
+                    </a>
                     <hr className="my-4" />
                     <p className="text-2xl text-gray-400">Resume:</p>
-                    <a href="*" className="text-2xl text-red-600">{application.resume}</a>
+                    <a href={application.resume} download className="text-2xl text-red-600">
+                      Download Resume
+                    </a>
                     <hr className="my-4" />
                     <p className="text-2xl text-gray-400">About Yourself:</p>
                     <p className="text-2xl text-gray-900">{application.aboutYourself}</p>

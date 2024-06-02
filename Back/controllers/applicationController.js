@@ -1,8 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Application = require('../models/application');
 const User = require('../models/user');
-const multer = require('../middleware/multer');
-const upload = multer();
+
 // Get all applications
 const getApplications = asyncHandler(async (req, res) => {
   try {
@@ -18,7 +17,6 @@ const getApplications = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 // Get a single application by User ID
 const getApplication = asyncHandler(async (req, res) => {
@@ -38,35 +36,24 @@ const getApplication = asyncHandler(async (req, res) => {
 // Create a new application
 const createApplication = asyncHandler(async (req, res) => {
   try {
-    // Use the upload middleware here
-    upload.fields([
-      { name: 'resume', maxCount: 1 },
-      { name: 'coverLetter', maxCount: 1 }
-    ])(req, res, async (err) => {
-      if (err) {
-        return res.status(400).json({ message: 'File upload error: ' + err.message });
-      }
-      // Ensure that both resume and coverLetter are provided
-      if (!req.files || !req.files.resume || !req.files.coverLetter) {
-        return res.status(400).json({ message: 'Resume and cover letter are required' });
-      }
-      // Access resume and coverLetter files from req.files
-      const resume = req.files.resume[0];
-      const coverLetter = req.files.coverLetter[0];
-      // Create the application with resume and coverLetter buffers
-      const newApplication = await Application.create({
-        ...req.body,
-        resume: resume.buffer,
-        coverLetter: coverLetter.buffer
-      });
-      res.status(200).json({ message: 'Application created successfully' });
+    // Ensure that both resume and coverLetter are provided
+    if (!req.files || !req.files.resume || !req.files.coverLetter) {
+      return res.status(400).json({ message: 'Resume and cover letter are required' });
+    }
+    // Access resume and coverLetter files from req.files
+    const resume = req.files.resume;
+    const coverLetter = req.files.coverLetter;
+    // Create the application with resume and coverLetter buffers
+    const newApplication = await Application.create({
+      ...req.body,
+      resume: resume.data, // Store file buffer
+      coverLetter: coverLetter.data // Store file buffer
     });
+    res.status(200).json({ message: 'Application created successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
-
 
 
 // Update an application
